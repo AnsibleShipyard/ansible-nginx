@@ -1,0 +1,12 @@
+---
+nginx_playbook_version: "0.1.0"
+nginx_version: "1.5.9"
+nginx_reported_version: "nginx version: nginx/{{nginx_version}}"
+nginx_version_tag: "{{nginx_version}}"
+nginx_file_tag: "nginx-{{nginx_version_tag}}"
+nginx_file_name: "{{nginx_file_tag}}.tar.gz"
+nginx_base_url: "http://nginx.org/download"
+nginx_tarball_url: "{{nginx_base_url}}/{{nginx_file_name}}"
+nginx_bin: "nginx"
+nginx_daemon: "/usr/local/nginx/sbin/{{nginx_bin}}"
+nginx_tmp_dir: "/tmp/"

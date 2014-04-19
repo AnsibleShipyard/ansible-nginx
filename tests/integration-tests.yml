@@ -1,0 +1,15 @@
+---
+#
+# integration-tests.yml
+#
+
+- hosts: all
+  sudo: True
+  tasks:
+    # Tests
+    - name: Check node
+      command: ls {{nginx_daemon}}
+      register: nginx_path
+    - debug: msg="Nginx was installed in {{nginx_path.stdout}}"
+    - fail: msg="Nginx not found, tests failed."
+      when: nginx_path.stdout != "{{nginx_daemon}}"

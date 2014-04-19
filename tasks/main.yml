@@ -1,0 +1,42 @@
+---
+- include: Debian.yml
+  when: ansible_os_family == "Debian"
+
+- include: RedHat.yml
+  when: ansible_os_family == "RedHat"
+
+- name: Checking installed version of nginx
+  shell: /usr/bin/test "$({{nginx_daemon}} -v 2> /dev/null)" = {{nginx_reported_version}}
+  register: wanted_version_installed
+  ignore_errors: True
+  changed_when: "wanted_version_installed.rc == 1"
+
+- name: Download nginx {{nginx_file_tag}}
+  get_url: url={{nginx_tarball_url}} dest={{nginx_tmp_dir}}{{nginx_file_name}}
+  when: wanted_version_installed.rc == 1
+
+# TODO: PGP check
+
+- name: Unpack nginx {{nginx_file_tag}}
+  command: tar -xvzf {{nginx_file_name}} chdir={{nginx_tmp_dir}}
+  when: wanted_version_installed.rc == 1
+
+- name: Compile and install nginx {{nginx_file_tag}}
+  shell: ./configure && make && make install chdir={{nginx_tmp_dir}}{{nginx_file_tag}}
+  sudo: true
+  when: wanted_version_installed.rc == 1
+
+- name: Create nginx default file
+  template: src=nginx-default.j2 dest=/etc/default/nginx
+    owner="root" group="root" mode=0664
+
+- name: Remove nginx-init-ubuntu script
+  file: path=/etc/init.d/nginx state=absent
+
+# Force download of master
+- name: download nginx-init-ubuntu init script
+  get_url: url=https://raw.github.com/JasonGiedymin/nginx-init-ubuntu/master/nginx
+    dest=/etc/init.d/nginx
+    mode=0740
+    force=yes
+  notify: restart nginx
