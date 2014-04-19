@@ -1,4 +1,17 @@
 ---
+- name: Detect Docker
+  shell: /bin/grep -q "docker" /proc/1/cgroup
+  register: docker_installed
+  ignore_errors: True
+
+- name: Docker Message
+  debug: msg="This host is running inside a docker container"
+  when: "docker_installed.rc == 0"
+
+# TODO: var this
+- name: Ensure /etc/nginx directory exists for configurations
+  file: path=/etc/nginx state=directory
+
 - include: Debian.yml
   when: ansible_os_family == "Debian"
 
@@ -6,7 +19,7 @@
   when: ansible_os_family == "RedHat"
 
 - name: Checking installed version of nginx
-  shell: /usr/bin/test "$({{nginx_daemon}} -v 2> /dev/null)" = {{nginx_reported_version}}
+  shell: /usr/bin/test "$({{nginx_daemon}} -v 2> /dev/null)" = "{{nginx_reported_version}}"
   register: wanted_version_installed
   ignore_errors: True
   changed_when: "wanted_version_installed.rc == 1"
@@ -28,10 +41,22 @@
 
 - name: Create nginx default file
   template: src=nginx-default.j2 dest=/etc/default/nginx
-    owner="root" group="root" mode=0664
+    owner="root" group="root" mode=0654
+  when: "docker_installed.rc == 1" # when not running in a docker
+
+- name: Create Docker variant of nginx.conf file
+  template: src=nginx.conf.docker.j2 dest={{nginx_install_prefix}}/conf/nginx.conf
+    owner="root" group="root" mode=0644
+  when: "docker_installed.rc == 0" # when _running_ in a docker
+
+- name: Create nginx.conf file
+  template: src=nginx.conf.j2 dest={{nginx_install_prefix}}/conf/nginx.conf
+    owner="root" group="root" mode=0644
+  when: "docker_installed.rc == 1" # when not in a docker
 
 - name: Remove nginx-init-ubuntu script
   file: path=/etc/init.d/nginx state=absent
+  when: "docker_installed.rc == 1" # when not running in a docker
 
 # Force download of master
 - name: download nginx-init-ubuntu init script
@@ -40,3 +65,4 @@
     mode=0740
     force=yes
   notify: restart nginx
+  when: "docker_installed.rc == 1" # when not running in a docker
