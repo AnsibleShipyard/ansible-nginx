@@ -39,4 +39,5 @@ EXPOSE 80
 
 # Safely assume that since we FROM'd the base ubuntu
 # that the nginx bin is in the default location
-CMD $NGINX_PREFIX/sbin/nginx -c $NGINX_PREFIX/conf/nginx.conf
+# CMD $NGINX_PREFIX/sbin/nginx -c $NGINX_PREFIX/conf/nginx.conf
+CMD /usr/bin/test ! -f /etc/init.d/nginx; $NGINX_PREFIX/sbin/nginx -c $NGINX_PREFIX/conf/nginx.conf

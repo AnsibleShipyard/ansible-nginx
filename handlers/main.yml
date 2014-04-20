@@ -1,3 +1,5 @@
 ---
+# Here but not used, notify of restart will fail in docker
+# even with 'when' conditional
 - name: restart nginx
   service: name=nginx state=restarted

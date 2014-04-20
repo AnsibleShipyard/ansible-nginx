@@ -1,5 +1,5 @@
 #!/bin/bash
-docker build -t AnsibleShipyard/base-ubuntu-nginx .
+time docker build -t AnsibleShipyard/base-ubuntu-nginx .
 
 # to use this docker
 # docker run -d -P AnsibleShipyard/base-ubuntu-nginx
