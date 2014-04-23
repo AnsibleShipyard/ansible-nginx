@@ -29,7 +29,7 @@ ADD tests/inventory /etc/ansible/hosts
 ADD tests/playbook.yml $WORKDIR/playbook.yml
 
 # Execute
-RUN ansible-playbook $WORKDIR/playbook.yml -c local
+RUN ansible-playbook $WORKDIR/playbook.yml -c local -vvvv
 
 # TODO: in debug mode, leave. Prod, cleanup
 # Cleanup
@@ -39,5 +39,4 @@ EXPOSE 80
 
 # Safely assume that since we FROM'd the base ubuntu
 # that the nginx bin is in the default location
-# CMD $NGINX_PREFIX/sbin/nginx -c $NGINX_PREFIX/conf/nginx.conf
-CMD /usr/bin/test ! -f /etc/init.d/nginx; $NGINX_PREFIX/sbin/nginx -c $NGINX_PREFIX/conf/nginx.conf
+CMD ["bash", "/usr/local/nginx/nginx-start.sh"]

@@ -61,31 +61,34 @@
   # when not in a docker
   when: docker_installed.rc == 1
 
-# == Init script ==
+# == Init script & Start file ==
+# When not running docker
 - name: Remove nginx-init-ubuntu script
   file: path=/etc/init.d/nginx state=absent
   # when not running in a docker
-  when: docker_installed.rc == 1 or nginx_docker_override == True
+  when: docker_installed.rc == 1
 
-# - name: Create nginx init file using local nginx-init-ubuntu script
+# Local init when not running docker
+- name: Create nginx init file using local nginx-init-ubuntu script
   template: src=nginx-init-ubuntu.j2 dest=/etc/init.d/nginx
     owner="root" group="root" mode=0755
-  when: nginx_use_local_init == True
-  # when not in a docker or when explicitly told to via override
-  # when: docker_installed.rc == 1 or nginx_docker_override == True
+  when: nginx_use_local_init == True and docker_installed.rc == 1
 
-# Force download of master when not running in docker or
-# when explicitly told to via override
+# Force download of master when explicitly told and not running docker
 - name: download nginx-init-ubuntu init script
   get_url: url=https://raw.github.com/JasonGiedymin/nginx-init-ubuntu/master/nginx
     dest=/etc/init.d/nginx
     mode=0740
     force=yes
-  when: nginx_use_local_init == False
-  # when not running in a docker
-  # when: docker_installed.rc == 1 or nginx_docker_override == True
+  when: nginx_use_local_init == False and docker_installed.rc == 1
+
+- name: Create custom start script
+  template: src=nginx-start.j2 dest={{nginx_install_prefix}}/nginx-start.sh
+    owner="root" group="root" mode=0644
+  # when not in a docker
+  when: docker_installed.rc == 0
 
 # Notify will fail above even with 'when' conditional (because docker)
-# - name: restart nginx
-#   service: name=nginx state=restarted
-#   when: docker_installed.rc == 1 or nginx_docker_override == True
+- name: restart nginx
+  service: name=nginx state=restarted
+  when: docker_installed.rc == 1

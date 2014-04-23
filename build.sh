@@ -1,11 +1,13 @@
 #!/bin/bash
 time docker build -t AnsibleShipyard/base-ubuntu-nginx .
 
-# to use this docker
-# docker run -d -P AnsibleShipyard/base-ubuntu-nginx
-# then, given that port is the port mapped when you did `docker ps`
-#    curl http://localhost:<port>
-# should yield an html page response
-
-# to run in interactive mode for debug
-# docker run -t -i AnsibleShipyard/base-ubuntu-nginx bash
+echo "to use this docker:"
+echo "    docker run -d -P AnsibleShipyard/base-ubuntu-nginx"
+echo
+echo " then, with the port listed running [docker ps]"
+echo "    curl http://localhost:<port>"
+echo " should yield an html page response"
+echo
+echo "to run in interactive mode for debug:"
+echo "    docker run -t -i AnsibleShipyard/base-ubuntu-nginx bash"
+echo
