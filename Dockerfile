@@ -1,13 +1,13 @@
 #
-# AnsibleShipyard/base-ubuntu-nginx
-#   docker build -t AnsibleShipyard/base-ubuntu-nginx .
+# jasongiedymin/ansible-nginx
+#   docker build -t jasongiedymin/ansible-nginx .
 #
 # Requires:
-# AnsibleShipyard/base-ubuntu
-#   https://github.com/AnsibleShipyard/base-ubuntu
+# jasongiedymin/ansible-base-ubuntu
+#   https://github.com/AnsibleShipyard/ansible-base-ubuntu
 #
 
-FROM AnsibleShipyard/base-ubuntu
+FROM jasongiedymin/ansible-base-ubuntu
 MAINTAINER AnsibleShipyard
 
 # Working dir
