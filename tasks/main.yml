@@ -49,14 +49,17 @@
   # when not running in a docker
   when: docker_installed.rc == 1
 
+# - name: Remove nginx.conf file
+#   command: rm {{nginx_install_prefix}}/conf/nginx.conf
+
 - name: Create Docker variant of nginx.conf file
   template: src=nginx.conf.docker.j2 dest={{nginx_install_prefix}}/conf/nginx.conf
     owner="root" group="root" mode=0744
   # when _running_ in a docker
   when: docker_installed.rc == 0
 
-- name: Create nginx.conf file
-  template: src=nginx.conf.j2 dest={{nginx_install_prefix}}/conf/nginx.conf
+- name: Create nginx.conf file from {{nginx_conf_file}} to {{nginx_install_prefix}}/conf/nginx.conf
+  template: src={{nginx_conf_file}} dest={{nginx_install_prefix}}/conf/nginx.conf
     owner="root" group="root" mode=0644
   # when not in a docker
   when: docker_installed.rc == 1

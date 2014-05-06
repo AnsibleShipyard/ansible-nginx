@@ -13,5 +13,8 @@ nginx_daemon: "{{nginx_install_prefix}}/sbin/{{nginx_bin}}"
 nginx_tmp_dir: "/tmp/"
 nginx_use_local_init: False
 
+# Config Files & Tempaltes
+nginx_conf_file: "nginx.conf.j2"
+
 # Good for testing in general, and testing nginx-init-ubuntu
 nginx_docker_override: False
