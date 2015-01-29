@@ -1,39 +1,39 @@
 #
-# jasongiedymin/ansible-nginx
-#   docker build -t jasongiedymin/ansible-nginx .
-#
-# Requires:
-# jasongiedymin/ansible-base-ubuntu
-#   https://github.com/AnsibleShipyard/ansible-base-ubuntu
-#
+# ------------------------------------------------------
+#                       Dockerfile
+# ------------------------------------------------------
+# image:    ansible-sbt
+# tag:      latest
+# name:     ansibleshipyard/ansible-base-ubuntu
+# version:  v0.2.0
+# repo:     https://github.com/AnsibleShipyard/ansible-nginx
+# how-to:   docker build --force-rm -t ansibleshipyard/ansible-nginx .
+# requires: ansibleshipyard/ansible-base-ubuntu
+# authors:  github:@jasongiedymin,
+#           github:
+# ------------------------------------------------------
 
-FROM jasongiedymin/ansible-base-ubuntu
-MAINTAINER AnsibleShipyard
+FROM ansibleshipyard/ansible-base-ubuntu
+MAINTAINER ansibleshipyard
 
-# Working dir
-ENV WORKDIR /tmp/build/nginx
+# -----> Env
+ENV WORKDIR /tmp/build/roles/ansible-nginx
 ENV NGINX_PREFIX /usr/local/nginx
 
-# ADD
-ADD meta $WORKDIR/meta
-ADD tasks $WORKDIR/tasks
-ADD tests $WORKDIR/tests
-ADD vars $WORKDIR/vars
-ADD templates $WORKDIR/templates
-ADD handlers $WORKDIR/handlers
+WORKDIR /tmp/build/roles/ansible-nginx
 
-# Here we continue to use add because
-# there are a limited number of RUNs
-# allowed.
-ADD tests/inventory /etc/ansible/hosts
-ADD tests/playbook.yml $WORKDIR/playbook.yml
+# -----> Add assets
+ADD ./meta $WORKDIR/meta
+ADD ./tasks $WORKDIR/tasks
+ADD ./vars $WORKDIR/vars
+ADD ./templates $WORKDIR/templates
+ADD ./handlers $WORKDIR/handlers
+ADD ./ci $WORKDIR/ci
 
-# Execute
-RUN ansible-playbook $WORKDIR/playbook.yml -c local -vvvv
+# -----> Install Galaxy Dependencies
 
-# TODO: in debug mode, leave. Prod, cleanup
-# Cleanup
-# RUN rm -R $WORKDIR
+# -----> Execute
+RUN ansible-playbook -i $WORKDIR/ci/inventory $WORKDIR/ci/playbook.yml -c local -vvvv
 
 EXPOSE 80
 
