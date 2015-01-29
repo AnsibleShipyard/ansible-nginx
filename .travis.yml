@@ -20,5 +20,3 @@ script:
   - "ansible-playbook -i ci/inventory ci/$SITE --syntax-check"
 
   - "ansible-playbook -i ci/inventory ci/playbook.yml --connection=local --sudo -vvvv"
-
-  - "sbt -version"
