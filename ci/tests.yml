@@ -1,20 +1,21 @@
 ---
-#
-# integration-tests.yml
-#
 
-- hosts: all
-  sudo: True
+- hosts: localhost
+  connection: local
+  sudo: yes
   vars:
     nginx_daemon: "/usr/local/nginx/sbin/nginx"
     nginx_conf_location: "/etc/nginx/nginx.conf"
+  
   tasks:
     # Tests
     - name: Check nginx file
-      # could do a test -e instead
-      # TODO: write a legit test...
       command: ls {{nginx_daemon}}
       register: nginx_path
-    - debug: msg="Nginx was installed in {{nginx_path.stdout}}"
-    - fail: msg="Nginx not found, tests failed."
+
+    - debug: 
+        msg: "Nginx was installed in {{nginx_path.stdout}}"
+
+    - fail: 
+        msg:"Nginx not found, tests failed."
       when: nginx_path.stdout != "{{nginx_daemon}}"

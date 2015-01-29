@@ -1,6 +1,16 @@
 ansible-nginx
 ==============
 
+[![Build Status](https://travis-ci.org/AnsibleShipyard/ansible-nginx.svg?branch=master)](https://travis-ci.org/AnsibleShipyard/ansible-nginx)
+
+
+## Usage
+
+docker pull [ansibleshipyard/ansible-nginx](https://registry.hub.docker.com/u/ansibleshipyard/ansible-nginx/)
+
+
+## Info
+
 Nginx Playbook for Ansible + [nginx-init-ubuntu](https://github.com/JasonGiedymin/nginx-init-ubuntu)
 
 This playbook will install Nginx + nginx-init-ubuntu.
